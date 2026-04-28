@@ -494,6 +494,8 @@ fn processBin(
   vel:      ptr<function,vec2f>,
 ) -> u32 {
   var count = 0u;
+  // make sure there's a valid bin to check
+  if( boidBinIdx >= arrayLength(&binSizes) || boidBinIdx < 0 ) { return 0; }
   let binSize = binSizes[ boidBinIdx ];
   // hard limit
   let loopSize = select( binSize, 1024, binSize > 1024 );
@@ -530,8 +532,11 @@ fn cs(@builtin(global_invocation_id) cell:vec3u)  {
   
   var count: u32 = 0;
   var boid:Particle  = state_r[ idx ];
-  
-  var topidx = getBinIndex( boid.pos ); // bin above boid
+
+  var pos = boid.pos;
+  // offset to one bin above
+  pos.y -= select( 0., 2./SIZE, pos.y > -1+2./SIZE );
+  var topidx = getBinIndex( pos ); // top
   var i:i32 = 0; // keep track of index
     
   var center:vec2f   = vec2f(0.); // rule 1
@@ -548,33 +553,27 @@ fn cs(@builtin(global_invocation_id) cell:vec3u)  {
   i += i32(SIZE) - 1;
   count += processBin( boid, cell.x, u32(i), prefixes[i+1], &center, &keepaway, &vel ); // bottom 
 
-
   // apply effects of rule 1
-  center /= f32( count - 1u );
-  boid.vel += (center-boid.pos) * .05;
+  center = select( center, center/f32(count), count != 0 ); 
+  boid.vel += (center-boid.pos);
 
   // apply effects of rule 2
-  boid.vel += keepaway;
+  boid.vel += keepaway * .0075;
 
   // apply effects of rule 3
-  vel /= f32( count - 1u );
+  vel = select( vel, vel/f32(count), count != 0 ); 
   boid.vel += vel * .01;
 
+  // move towards center so boids stay on screen
+  boid.vel += (vec2f(0.,0.) - boid.pos);
+
   // limit speed
-  if( length( boid.vel ) > 5. ) {
-    boid.vel = (boid.vel / length(boid.vel)) * 5.;
+  if( length( boid.vel ) > 10. ) {
+    boid.vel = (boid.vel / length(boid.vel)) * 10.;
   }
-  
+   
   // calculate next position
   boid.pos = boid.pos + (2. / res) * boid.vel;
-
-  // boundaries
-  if( abs( boid.pos.y ) >= 1. ) { 
-    boid.vel.y *= -1.; 
-  }
-  if( abs( boid.pos.x ) > 1. ) {
-    boid.vel.x *= -1.;
-  }
 
   state_w[ idx ] = boid;
 }
@@ -588,7 +587,6 @@ fn getBinIndex(position : vec2f) -> i32 {
 
   return binxy.y * i32(SIZE) + binxy.x;
 }
-
 ```
 
 OK, least but not least let's update our javascript:
