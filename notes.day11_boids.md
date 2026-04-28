@@ -34,7 +34,7 @@ OK, here we go!
 
 ## The Setup
 
-The [template project we'll use for this tutorial](https://github.com/charlieroberts/seagulls/tree/main/howtos/13_many_particles) is the seagulls `many_particles` howto. 
+The [template project we'll use for this tutorial](https://codeberg.org/charlieroberts/seagulls/src/branch/main/howtos/13_many_particles) is the seagulls `many_particles` howto. 
 We don't need to do anything to our `main.js` file or our `render.glsl` file for now; everything is all set to go there.
 We just need to modify our compute shader. Once boids is up and running, we'll play around with
 the rendering / number of agents.
