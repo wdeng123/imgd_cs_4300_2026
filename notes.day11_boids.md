@@ -34,10 +34,10 @@ OK, here we go!
 
 ## The Setup
 
-The [template project we'll use for this tutorial](https://github.com/charlieroberts/seagulls/tree/main/demos/14_many_particles) is the seagulls `many_particles` demo. 
-We don't need to do anything to our `main.js` file or our `render.glsl` file; everything is all set to go there.
-We just need to modify our compute shader. Once boids is up and running, you're welcome to play around with
-the rendering / number of agents if you like.
+The [template project we'll use for this tutorial](https://github.com/charlieroberts/seagulls/tree/main/howtos/13_many_particles) is the seagulls `many_particles` howto. 
+We don't need to do anything to our `main.js` file or our `render.glsl` file for now; everything is all set to go there.
+We just need to modify our compute shader. Once boids is up and running, we'll play around with
+the rendering / number of agents.
 
 Let's go ahead and open up our `compute.glsl` file. Make sure you change the `Particle` definition at the top of
 file to use a `vec2f` for velocity instead of a single float for `speed`.
