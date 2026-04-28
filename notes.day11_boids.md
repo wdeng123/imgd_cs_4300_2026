@@ -443,7 +443,7 @@ We'll need to create  new buffer to store the current count of each bin as we pl
 ```js
 const count_b = sg.buffer( new Float32Array( GRID_SIZE*GRID_SIZE ) )
 const place = sg.compute({
-  shader: place_particles_shader + getBinIndex,
+  shader: place_particles_shader,
   data:[
     sg.pingpong(state_b2,state_b),
     sizes_b,
@@ -593,7 +593,7 @@ OK, least but not least let's update our javascript:
 
 ```js
 const compute = sg.compute({
-  shader: compute_shader + getBinIndex,
+  shader: compute_shader,
   data:[
     res_u,
     sg.pingpong(state_b2, state_b),
